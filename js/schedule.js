@@ -1,19 +1,18 @@
-const API = `https://scheduletracker-v1xz.onrender.com`; // http://localhost:3000 or https://scheduletracker-v1xz.onrender.com
+//const API = `http://localhost:3000`;
+const API = `https://scheduletracker-v1xz.onrender.com`;
 
-// Vispārīga funkcija, kas fetch un attēlo grafiku
 async function fetchSchedule() {
   const currentPage = window.location.pathname;
 
   let apiEndpoint;
 
-  // Izvēlas pareizo API endpointu atbilstoši lapai
   if (currentPage.includes("paula")) {
-    apiEndpoint = `${API}/api/paula`; // Paula API
+    apiEndpoint = `${API}/api/paula`;
   } else if (currentPage.includes("toms")) {
-    apiEndpoint = `${API}/api/toms`; // Toms API
+    apiEndpoint = `${API}/api/toms`;
   } else {
     console.error("Unknown page");
-    return; // Atgriežas, ja lapas nav ne Paula, ne Toms
+    return;
   }
 
   try {
@@ -28,10 +27,9 @@ async function fetchSchedule() {
   }
 }
 
-// Vispārīga funkcija grafika attēlošanai
 function displaySchedule(schedule) {
   const container = document.getElementById("schedule-container");
-  container.innerHTML = ""; // Clear previous content
+  container.innerHTML = "";
 
   schedule.forEach((day) => {
     const dayElement = document.createElement("div");
@@ -51,7 +49,6 @@ function displaySchedule(schedule) {
   });
 }
 
-// Funkcija, kas attēlo grafiku, izmantojot API galapunktu
 function showSchedule(apiEndpoint) {
   fetchSchedule(apiEndpoint)
     .then((schedule) => {
@@ -62,7 +59,6 @@ function showSchedule(apiEndpoint) {
     });
 }
 
-// Funkcija, kas attēlo tekošo laiku un datumu
 function updateTime() {
   const now = new Date();
 
@@ -106,48 +102,36 @@ function updateTime() {
   document.getElementById("current-month").innerHTML = month;
 }
 
-// Izsauc grafikus un laiku katram atsevišķam gadījumam
 document.addEventListener("DOMContentLoaded", () => {
-  // Izsauc Paulas grafiku
   showSchedule(`${API}/api/paula`);
-
-  // Izsauc Toma grafiku
   showSchedule(`${API}/api/toms`);
-
-  // Atjaunina laiku katru sekundi
   setInterval(updateTime, 1000);
   updateTime();
 });
 
-// ***********************************
-
-// Funkcija, lai atrastu šobrīd notiekošo stundu
 function getCurrentLesson(schedule) {
   const now = new Date();
-  const currentTime = now.getHours() * 60 + now.getMinutes(); // Laiks minūtēs
-  const today = getTodayName(); // Šodienas diena, piemēram, "Trešdiena"
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+  const today = getTodayName();
 
-  // Atrod šodienas grafiku
   const todaySchedule = schedule.find((day) => day.day === today);
 
   if (!todaySchedule) {
-    return null; // Ja šodien nav grafika, atgriež null
+    return null;
   }
 
-  // Atrod pašreizējo stundu
   const currentLesson = todaySchedule.lessons.find((lesson) => {
     const [start, end] = lesson.time
       .split(" - ")
       .map((t) =>
         t.split(":").reduce((h, m) => parseInt(h) * 60 + parseInt(m), 0)
       );
-    return currentTime >= start && currentTime < end; // Salīdzina laikus
+    return currentTime >= start && currentTime < end;
   });
 
-  return currentLesson || null; // Atgriež pašreizējo stundu vai null
+  return currentLesson || null;
 }
 
-// Funkcija, lai iegūtu šodienas nosaukumu
 function getTodayName() {
   const days = [
     "Svētdiena",
@@ -161,25 +145,21 @@ function getTodayName() {
   return days[new Date().getDay()];
 }
 
-// Funkcija, lai parādītu pašreizējo stundu
 function highlightCurrentLesson(schedule) {
   const container = document.getElementById("schedule-container");
   const currentLesson = getCurrentLesson(schedule);
 
-  // Atjauno "Šobrīd notiek" tekstu
   const currentLessonText = currentLesson
     ? `${currentLesson.time} - ${currentLesson.activity} (${currentLesson.location})`
-    : "Šobrīd nav neviena stunda.";
+    : "Šobrīd stundas nenotiek.";
   document.querySelector(".current-lesson").textContent = currentLessonText;
 
-  // Notīra iepriekšējos izcēlumus
   container.querySelectorAll(".highlight").forEach((el) => {
     el.classList.remove("highlight");
   });
 
-  // Izceļ pašreizējo stundu tikai šodienas grafika ietvaros
   if (currentLesson) {
-    const today = getTodayName(); // Šodienas diena
+    const today = getTodayName();
     const daySection = Array.from(container.querySelectorAll(".day")).find(
       (el) => el.querySelector("h3").textContent.includes(today)
     );
@@ -198,13 +178,11 @@ function highlightCurrentLesson(schedule) {
   }
 }
 
-// Sauc funkciju regulāri
 document.addEventListener("DOMContentLoaded", () => {
   fetchSchedule()
     .then((schedule) => {
       displaySchedule(schedule);
 
-      // Pārbauda pašreizējo stundu ik pēc 1 sekundes
       setInterval(() => highlightCurrentLesson(schedule), 1000);
       highlightCurrentLesson(schedule);
     })

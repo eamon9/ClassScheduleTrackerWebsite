@@ -6,27 +6,18 @@ import path from "path";
 const PORT = process.env.PORT || 3000;
 
 const app = express();
-/* app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST"],
-  })
-); */ // šo izmanto tikai palaižot serveri datorā
 
-// Define API URL based on the environment
 let apiUrl;
 
 if (PORT !== 3000) {
-  // In production, use Render API endpoint
   apiUrl = "https://scheduletracker-v1xz.onrender.com";
   app.use(
     cors({
-      origin: `${apiUrl}`, // Atļauj tikai šo URL
+      origin: `${apiUrl}`,
       methods: ["GET", "POST"],
     })
   );
 } else {
-  // In local development, use the local server URL
   apiUrl = `http://localhost:${PORT}`;
   app.use(
     cors({
@@ -38,13 +29,11 @@ if (PORT !== 3000) {
 
 console.log(`API URL is set to: ${apiUrl} with PORT: ${PORT}`);
 
-// Apkalpo statiskos failus no galvenās mapes
 const __dirname = new URL(".", import.meta.url).pathname;
 app.use(express.static(path.join(__dirname, "../")));
 
-// Kalpo HTML failu
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../index.html")); // Pārliecinies, ka ceļš uz index.html ir pareizs
+  res.sendFile(path.join(__dirname, "../index.html"));
 });
 
 function parseSchedule(rawData) {
@@ -107,16 +96,16 @@ app.get("/api/paula", (req, res) => {
 });
 
 app.get("/api/toms", (req, res) => {
-  const filePath = "./txtSchedules/toms.txt"; // Toms grafika fails
+  const filePath = "./txtSchedules/toms.txt";
 
   if (!fs.existsSync(filePath)) {
     return res.status(404).json({error: "File toms.txt not found."});
   }
 
   try {
-    const rawData = fs.readFileSync(filePath, "utf-8"); // Nolasa Toms grafiku
-    const schedule = parseSchedule(rawData); // Parsē grafiku
-    res.json(schedule); // Nosūta JSON atbildi
+    const rawData = fs.readFileSync(filePath, "utf-8");
+    const schedule = parseSchedule(rawData);
+    res.json(schedule);
   } catch (error) {
     console.error("Error reading or parsing file:", error.message);
     res.status(500).json({error: "Failed to read Toms schedule file."});
