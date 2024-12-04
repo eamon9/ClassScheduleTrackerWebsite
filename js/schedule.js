@@ -1,4 +1,4 @@
-const API = `https://scheduletracker-v1xz.onrender.com`; // http://localhost:3000
+const API = `http://localhost:3000`; // http://localhost:3000 or https://scheduletracker-v1xz.onrender.com
 
 // Vispārīga funkcija, kas fetch un attēlo grafiku
 async function fetchSchedule() {

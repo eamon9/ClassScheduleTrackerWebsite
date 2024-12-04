@@ -15,22 +15,28 @@ const app = express();
 
 // Define API URL based on the environment
 let apiUrl;
+
 if (PORT !== 3000) {
   // In production, use Render API endpoint
-  apiUrl = "https://scheduletracker-v1xz.onrender.com";  // Replace with your actual Render URL
+  apiUrl = "https://scheduletracker-v1xz.onrender.com";
+  app.use(
+    cors({
+      origin: `${apiUrl}`, // Atļauj tikai šo URL
+      methods: ["GET", "POST"],
+    })
+  );
 } else {
   // In local development, use the local server URL
   apiUrl = `http://localhost:${PORT}`;
+  app.use(
+    cors({
+      origin: "*",
+      methods: ["GET", "POST"],
+    })
+  );
 }
 
-console.log(`API URL is set to: ${apiUrl}`);
-
-app.use(
-  cors({
-    origin: `${apiUrl}`, // Atļauj tikai šo URL
-    methods: ["GET", "POST"],
-  })
-);
+console.log(`API URL is set to: ${apiUrl} with PORT: ${PORT}`);
 
 // Apkalpo statiskos failus no galvenās mapes
 const __dirname = new URL(".", import.meta.url).pathname;
