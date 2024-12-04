@@ -1,8 +1,8 @@
+const API = `https://scheduletracker-v1xz.onrender.com`; // http://localhost:3000
+
 // Vispārīga funkcija, kas fetch un attēlo grafiku
 async function fetchSchedule() {
   const currentPage = window.location.pathname;
-
-  const API = `https://scheduletracker-v1xz.onrender.com`; // http://localhost:3000
 
   let apiEndpoint;
 
