@@ -1,5 +1,5 @@
 // comment out const API = `http://localhost:3000` when commit and push changes to git
-// const API = `http://localhost:3000`;
+//const API = `http://localhost:3000`;
 const API = `https://scheduletracker-v1xz.onrender.com`;
 
 // days starts with 0- Svētdiena for better organization
@@ -34,12 +34,14 @@ const months = [
 const mockDay = mockDate.getDay(); // Gets the day of the week (e.g., 2 for Otrdiena)
 const mockTime = mockDate.getHours() * 60 + mockDate.getMinutes(); // Converts to total minutes
 const today = days[mockDay];
+const now = mockDate;
 const currentTime = mockTime;
-const now = mockDate; */
+ */
 
 const today = days[new Date().getDay()];
-const currentTime = now.getHours() * 60 + now.getMinutes();
 const now = new Date();
+const currentTime = now.getHours() * 60 + now.getMinutes();
+
 //******************* */
 
 async function fetchSchedule() {
