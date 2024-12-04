@@ -234,13 +234,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle current lesson container click
   const currentLessonDiv = document.querySelector(".current-lesson");
+
   if (currentLessonDiv) {
     currentLessonDiv.addEventListener("click", () => {
-      if (schedule) {
-        // Ensure schedule is available before calling the function
-        scrollToCurrentDay(); // Scroll to the current day's section
+      const lessonText = currentLessonDiv.textContent.trim();
+      if (lessonText === "Šobrīd stundas nenotiek.") {
+        console.log("No lessons currently, skipping scroll.");
+        return;
+      }
+
+      const currentDay = document
+        .getElementById("current-day")
+        .textContent.trim();
+
+      const container = document.getElementById("schedule-container");
+      const daySection = Array.from(container.querySelectorAll(".day")).find(
+        (el) => el.querySelector("h3").textContent.includes(currentDay)
+      );
+
+      if (daySection) {
+        daySection.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       } else {
-        console.error("Schedule is not yet available.");
+        console.log(`No schedule found for ${currentDay}`);
       }
     });
   }
@@ -268,4 +286,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
-
