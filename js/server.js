@@ -6,19 +6,19 @@ import path from "path";
 const PORT = process.env.PORT || 3000;
 
 const app = express();
-app.use(
+/* app.use(
   cors({
     origin: "*",
     methods: ["GET", "POST"],
   })
-); // šo izmanto tikai palaižot serveri datorā
+); */ // šo izmanto tikai palaižot serveri datorā
 
-/* app.use(
+app.use(
   cors({
     origin: "https://scheduletracker-v1xz.onrender.com", // Atļauj tikai šo URL
     methods: ["GET", "POST"],
   })
-); */
+);
 
 // Apkalpo statiskos failus no galvenās mapes
 const __dirname = new URL(".", import.meta.url).pathname;
@@ -106,5 +106,5 @@ app.get("/api/toms", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is runninggg on http://localhost:${PORT}`);
 });

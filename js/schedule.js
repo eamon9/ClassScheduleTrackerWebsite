@@ -7,9 +7,9 @@ async function fetchSchedule() {
 
   // Izvēlas pareizo API endpointu atbilstoši lapai
   if (currentPage.includes("paula")) {
-    apiEndpoint = "http://localhost:3000/api/paula"; // Paula API
+    apiEndpoint = "https://scheduletracker-v1xz.onrender.com/api/paula"; // Paula API
   } else if (currentPage.includes("toms")) {
-    apiEndpoint = "http://localhost:3000/api/toms"; // Toms API
+    apiEndpoint = "https://scheduletracker-v1xz.onrender.com/api/toms"; // Toms API
   } else {
     console.error("Unknown page");
     return; // Atgriežas, ja lapas nav ne Paula, ne Toms
@@ -108,10 +108,10 @@ function updateTime() {
 // Izsauc grafikus un laiku katram atsevišķam gadījumam
 document.addEventListener("DOMContentLoaded", () => {
   // Izsauc Paulas grafiku
-  showSchedule("http://localhost:3000/api/paula");
+  showSchedule("https://scheduletracker-v1xz.onrender.com/api/paula");
 
   // Izsauc Toma grafiku
-  showSchedule("http://localhost:3000/api/toms");
+  showSchedule("https://scheduletracker-v1xz.onrender.com/api/toms");
 
   // Atjaunina laiku katru sekundi
   setInterval(updateTime, 1000);
