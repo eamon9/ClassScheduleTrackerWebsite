@@ -2,14 +2,15 @@
 async function fetchSchedule() {
   const currentPage = window.location.pathname;
 
+  const API = `https://scheduletracker-v1xz.onrender.com`; // http://localhost:3000
 
   let apiEndpoint;
 
   // Izvēlas pareizo API endpointu atbilstoši lapai
   if (currentPage.includes("paula")) {
-    apiEndpoint = "https://scheduletracker-v1xz.onrender.com/api/paula"; // Paula API
+    apiEndpoint = `${API}/api/paula`; // Paula API
   } else if (currentPage.includes("toms")) {
-    apiEndpoint = "https://scheduletracker-v1xz.onrender.com/api/toms"; // Toms API
+    apiEndpoint = `${API}/api/toms`; // Toms API
   } else {
     console.error("Unknown page");
     return; // Atgriežas, ja lapas nav ne Paula, ne Toms
@@ -108,10 +109,10 @@ function updateTime() {
 // Izsauc grafikus un laiku katram atsevišķam gadījumam
 document.addEventListener("DOMContentLoaded", () => {
   // Izsauc Paulas grafiku
-  showSchedule("https://scheduletracker-v1xz.onrender.com/api/paula");
+  showSchedule(`${API}/api/paula`);
 
   // Izsauc Toma grafiku
-  showSchedule("https://scheduletracker-v1xz.onrender.com/api/toms");
+  showSchedule(`${API}/api/toms`);
 
   // Atjaunina laiku katru sekundi
   setInterval(updateTime, 1000);
@@ -145,7 +146,6 @@ function getCurrentLesson(schedule) {
 
   return currentLesson || null; // Atgriež pašreizējo stundu vai null
 }
-
 
 // Funkcija, lai iegūtu šodienas nosaukumu
 function getTodayName() {
@@ -198,7 +198,6 @@ function highlightCurrentLesson(schedule) {
   }
 }
 
-
 // Sauc funkciju regulāri
 document.addEventListener("DOMContentLoaded", () => {
   fetchSchedule()
@@ -213,6 +212,3 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error fetching or displaying schedule:", error);
     });
 });
-
-/* setInterval(() => highlightCurrentLesson(schedule), 1000); // Atjauno reizi sekundē
-highlightCurrentLesson(schedule); */

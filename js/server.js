@@ -13,9 +13,21 @@ const app = express();
   })
 ); */ // šo izmanto tikai palaižot serveri datorā
 
+// Define API URL based on the environment
+let apiUrl;
+if (PORT !== 3000) {
+  // In production, use Render API endpoint
+  apiUrl = "https://scheduletracker-v1xz.onrender.com";  // Replace with your actual Render URL
+} else {
+  // In local development, use the local server URL
+  apiUrl = `http://localhost:${PORT}`;
+}
+
+console.log(`API URL is set to: ${apiUrl}`);
+
 app.use(
   cors({
-    origin: "https://scheduletracker-v1xz.onrender.com", // Atļauj tikai šo URL
+    origin: `${apiUrl}`, // Atļauj tikai šo URL
     methods: ["GET", "POST"],
   })
 );
