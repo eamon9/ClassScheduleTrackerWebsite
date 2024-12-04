@@ -1,3 +1,32 @@
+const days = [
+  "Svētdiena",
+  "Pirmdiena",
+  "Otrdiena",
+  "Trešdiena",
+  "Ceturtdiena",
+  "Piektdiena",
+  "Sestdiena",
+];
+
+const months = [
+  "Janvāris",
+  "Februāris",
+  "Marts",
+  "Aprīlis",
+  "Maijs",
+  "Jūnijs",
+  "Jūlijs",
+  "Augusts",
+  "Septembris",
+  "Oktobris",
+  "Novembris",
+  "Decembris",
+];
+
+function getTodayName() {
+  return days[new Date().getDay()];
+}
+
 //const API = `http://localhost:3000`;
 const API = `https://scheduletracker-v1xz.onrender.com`;
 
@@ -42,11 +71,29 @@ function displaySchedule(schedule) {
     day.lessons.forEach((lesson) => {
       const lessonElement = document.createElement("p");
       lessonElement.textContent = `${lesson.time} - ${lesson.activity} (${lesson.location})`;
+
+      // Add the lesson element to the day
       dayElement.appendChild(lessonElement);
     });
 
     container.appendChild(dayElement);
   });
+
+  // Add click event for the current lesson display
+  const currentLessonDiv = document.querySelector(".current-lesson");
+
+  if (currentLessonDiv) {
+    currentLessonDiv.addEventListener("click", () => {
+      // Find the current lesson element and scroll it into view
+      const currentLesson = document.querySelector(".highlight");
+      if (currentLesson) {
+        currentLesson.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    });
+  }
 }
 
 function showSchedule(apiEndpoint) {
@@ -61,31 +108,6 @@ function showSchedule(apiEndpoint) {
 
 function updateTime() {
   const now = new Date();
-
-  const days = [
-    "Svētdiena",
-    "Pirmdiena",
-    "Otrdiena",
-    "Trešdiena",
-    "Ceturtdiena",
-    "Piektdiena",
-    "Sestdiena",
-  ];
-  const months = [
-    "Janvāris",
-    "Februāris",
-    "Marts",
-    "Aprīlis",
-    "Maijs",
-    "Jūnijs",
-    "Jūlijs",
-    "Augusts",
-    "Septembris",
-    "Oktobris",
-    "Novembris",
-    "Decembris",
-  ];
-
   const dayName = days[now.getDay()];
   const dayDate = now.getDate();
   const month = `${months[now.getMonth()]}<br>`;
@@ -132,19 +154,6 @@ function getCurrentLesson(schedule) {
   return currentLesson || null;
 }
 
-function getTodayName() {
-  const days = [
-    "Svētdiena",
-    "Pirmdiena",
-    "Otrdiena",
-    "Trešdiena",
-    "Ceturtdiena",
-    "Piektdiena",
-    "Sestdiena",
-  ];
-  return days[new Date().getDay()];
-}
-
 function highlightCurrentLesson(schedule) {
   const container = document.getElementById("schedule-container");
   const currentLesson = getCurrentLesson(schedule);
@@ -152,7 +161,12 @@ function highlightCurrentLesson(schedule) {
   const currentLessonText = currentLesson
     ? `${currentLesson.time} - ${currentLesson.activity} (${currentLesson.location})`
     : "Šobrīd stundas nenotiek.";
-  document.querySelector(".current-lesson").textContent = currentLessonText;
+
+  // Update the current lesson text
+  const currentLessonDiv = document.querySelector(".current-lesson");
+  if (currentLessonDiv) {
+    currentLessonDiv.textContent = currentLessonText;
+  }
 
   container.querySelectorAll(".highlight").forEach((el) => {
     el.classList.remove("highlight");
