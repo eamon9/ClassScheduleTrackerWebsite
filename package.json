@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "jquery": "^3.7.1"
+  },
+  "name": "classscheduletrackerwebsite",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "watch": ["server.js", "routes/"],
+  "ext": "js,json"
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="lv">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./css/styles.css">
+  <title>Paulas grafiks</title>
+</head>
+
+<body>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="#">PAULA 9.vsk 2.A</a>
+    </li>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+        aria-expanded="false">Bērni</a>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="./paula.html">Paula</a></li>
+        <li><a class="dropdown-item" href="./toms.html">Toms</a></li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <li><a class="dropdown-item" href="./index.html">Sākums</a></li>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="http://www.r6vsk.lv" target="_blank">r6vsk.lv</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="http://www.mykoob.lv" target="_blank">MyKoob</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="https://www.e-klase.lv" target="_blank">E-klase</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link disabled" aria-disabled="true">Jaunumi</a>
+    </li>
+  </ul>
+
+  <div class="current-time-container">
+    <div>
+      <div id="current-time"></div>
+    </div>
+    <div class="current-day-date-time">
+      <div id="current-day"></div>
+      <div id="current-date"></div>
+      <div id="current-month"></div>
+    </div>
+  </div>
+
+  <div class="current-lesson" title="Šobrīd notiek: "></div>
+
+  <div id="schedule-container" class="schedule"></div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./js/schedule.js"></script>
+</body>
+
+</html>

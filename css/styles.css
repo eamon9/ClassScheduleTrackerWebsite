@@ -1,0 +1,83 @@
+.marketing .col-lg-4 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.marketing .col-lg-4 p {
+  margin-right: 0.75rem;
+  margin-left: 0.75rem;
+}
+
+.col-lg-4 {
+  width: 100%;
+}
+
+.current-time-container {
+  display: flex;
+  background-color: #2f0996; /* #1e90ff */
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-family: "Poppins", sans-serif;
+}
+
+#current-time {
+  display: flex;
+  align-items: center;
+  background-color: #1a1a1a;
+  border-radius: 0.1em;
+  margin: 10px;
+  padding: 0px 30px 5px 30px;
+  font-size: 3.5rem;
+}
+
+#current-day,
+#current-month {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+#current-date {
+  font-size: 3rem;
+  margin: -15px;
+}
+
+.current-day-date-time {
+  margin-left: 20px;
+}
+
+.current-lesson {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 40px;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  background-color: #2f0996;
+  color: white;
+  border-top: 2px solid white;
+}
+
+.day {
+  margin-left: 10px;
+}
+
+.highlight {
+  /* background-color: yellow;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 5px; */
+
+  margin-bottom: 20px;
+  background-color: #2f0996;
+  color: white;
+  border-top: 2px solid white;
+}
+
+.break {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
