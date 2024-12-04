@@ -1,6 +1,8 @@
+// comment out const API = `http://localhost:3000` when commit and push changes to git
 // const API = `http://localhost:3000`;
 const API = `https://scheduletracker-v1xz.onrender.com`;
 
+// days starts with 0- Svētdiena for better organization
 const days = [
   "Svētdiena",
   "Pirmdiena",
@@ -26,9 +28,19 @@ const months = [
   "Decembris",
 ];
 
-function getTodayName() {
-  return days[new Date().getDay()];
-}
+//******************* */
+// Override "today" and "currentTime" for testing
+/* const mockDate = new Date("2024-12-05T11:00:00"); // Set to desired date and time
+const mockDay = mockDate.getDay(); // Gets the day of the week (e.g., 2 for Otrdiena)
+const mockTime = mockDate.getHours() * 60 + mockDate.getMinutes(); // Converts to total minutes
+const today = days[mockDay];
+const currentTime = mockTime;
+const now = mockDate; */
+
+const today = days[new Date().getDay()];
+const currentTime = now.getHours() * 60 + now.getMinutes();
+const now = new Date();
+//******************* */
 
 async function fetchSchedule() {
   const currentPage = window.location.pathname;
@@ -63,7 +75,7 @@ function displaySchedule(schedule) {
   schedule.forEach((day) => {
     const dayElement = document.createElement("div");
     dayElement.classList.add("day");
-    dayElement.setAttribute("data-day", day.day); // Add the data-day attribute
+    dayElement.setAttribute("data-day", day.day);
 
     const dayTitle = document.createElement("h3");
     dayTitle.textContent = day.day;
@@ -71,7 +83,16 @@ function displaySchedule(schedule) {
 
     day.lessons.forEach((lesson) => {
       const lessonElement = document.createElement("p");
-      lessonElement.textContent = `${lesson.time} - ${lesson.activity} (${lesson.location})`;
+      lessonElement.textContent =
+        `${lesson.time} - ${lesson.activity} (${lesson.location})` +
+        (lesson.note ? ` [${lesson.note}]` : "");
+      // for debug!!! lesson.note
+      lesson.note
+        ? console.log(
+            `Lesson with note: ${lesson.time} - ${lesson.activity} (${lesson.location}) [${lesson.note}]`
+          )
+        : "";
+
       dayElement.appendChild(lessonElement);
     });
 
@@ -90,7 +111,6 @@ function showSchedule(apiEndpoint) {
 }
 
 function updateTime() {
-  const now = new Date();
   const dayName = days[now.getDay()];
   const dayDate = now.getDate();
   const month = `${months[now.getMonth()]}<br>`;
@@ -107,40 +127,7 @@ function updateTime() {
   document.getElementById("current-month").innerHTML = month;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  showSchedule(`${API}/api/paula`);
-  showSchedule(`${API}/api/toms`);
-  setInterval(updateTime, 1000);
-  updateTime();
-
-  const currentTimeContainer = document.querySelector(
-    ".current-time-container"
-  );
-
-  currentTimeContainer.addEventListener("click", () => {
-    const currentDay = document
-      .getElementById("current-day")
-      .textContent.trim();
-
-    const daySection = document.querySelector(`.day[data-day="${currentDay}"]`);
-    console.log(daySection);
-
-    if (daySection) {
-      daySection.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    } else {
-      console.log(`No schedule found for ${currentDay}`);
-    }
-  });
-});
-
 function getCurrentLesson(schedule) {
-  const now = new Date();
-  const currentTime = now.getHours() * 60 + now.getMinutes();
-  const today = getTodayName();
-
   const todaySchedule = schedule.find((day) => day.day === today);
 
   if (!todaySchedule) {
@@ -164,7 +151,8 @@ function highlightCurrentLesson(schedule) {
   const currentLesson = getCurrentLesson(schedule);
 
   const currentLessonText = currentLesson
-    ? `${currentLesson.time} - ${currentLesson.activity} (${currentLesson.location})`
+    ? `${currentLesson.time} - ${currentLesson.activity} (${currentLesson.location})` +
+      (currentLesson.note ? ` [${currentLesson.note}]` : "")
     : "Šobrīd stundas nenotiek.";
 
   // Update the current lesson text
@@ -178,7 +166,6 @@ function highlightCurrentLesson(schedule) {
   });
 
   if (currentLesson) {
-    const today = getTodayName();
     const daySection = Array.from(container.querySelectorAll(".day")).find(
       (el) => el.querySelector("h3").textContent.includes(today)
     );
@@ -198,14 +185,85 @@ function highlightCurrentLesson(schedule) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  let schedule = null; // Declare schedule in a broader scope
+
+  // Fetch and display the schedule
   fetchSchedule()
-    .then((schedule) => {
+    .then((data) => {
+      schedule = data; // Store the fetched schedule in the global variable
       displaySchedule(schedule);
 
+      // Highlight the current lesson at intervals
       setInterval(() => highlightCurrentLesson(schedule), 1000);
       highlightCurrentLesson(schedule);
     })
     .catch((error) => {
       console.error("Error fetching or displaying schedule:", error);
     });
+
+  // Initialize the clock
+  setInterval(updateTime, 1000);
+  updateTime();
+
+  // Function to scroll to the current day's section
+  function scrollToCurrentDay() {
+    const currentDay = document
+      .getElementById("current-day")
+      .textContent.trim();
+    const daySection = document.querySelector(`.day[data-day="${currentDay}"]`);
+
+    if (daySection) {
+      daySection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    } else {
+      console.log(`No schedule found for ${currentDay}`);
+    }
+  }
+
+  // Handle current time container click
+  const currentTimeContainer = document.querySelector(
+    ".current-time-container"
+  );
+  if (currentTimeContainer) {
+    currentTimeContainer.addEventListener("click", scrollToCurrentDay);
+  }
+
+  // Handle current lesson container click
+  const currentLessonDiv = document.querySelector(".current-lesson");
+  if (currentLessonDiv) {
+    currentLessonDiv.addEventListener("click", () => {
+      if (schedule) {
+        // Ensure schedule is available before calling the function
+        scrollToCurrentDay(); // Scroll to the current day's section
+      } else {
+        console.error("Schedule is not yet available.");
+      }
+    });
+  }
+
+  // Get the button element
+  const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+
+  // Show the button when scrolling down
+  window.onscroll = () => {
+    if (
+      document.body.scrollTop > 100 ||
+      document.documentElement.scrollTop > 100
+    ) {
+      scrollToTopBtn.style.display = "block";
+    } else {
+      scrollToTopBtn.style.display = "none";
+    }
+  };
+
+  // Scroll to the top when the button is clicked
+  scrollToTopBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  });
 });
+

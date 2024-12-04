@@ -12,7 +12,9 @@ Pirmdiena
 13:20 - 14:10 "Došanās uz baseinu" "Skolas buss"
 14:10 - 14:50 "Baseins" "NDĢ"
 14:00 - 15:15 "Došanās uz skolu" "Skolas buss"
-15:15 - 15:45 "Došanās mājup" "Sabiedriskais tr."
+15:15 - 16:00 "Došanās uz Skolēnu pili" "Tramvajs"
+16:00 - 18:00 "Keramika" "Skolēnu PILS"
+18:00 - 18:30 "Došanās mājup" "Sabiedriskais tr."
 Otrdiena
 08:30 - 09:10 "Sports un Veselība" "Sporta zāle"
 09:10 - 09:20 "Starpbrīdis" "Gaitenis"
@@ -55,3 +57,5 @@ Piektdiena
 12:25 - 12:30 "Starpbrīdis" "Gaitenis"
 12:30 - 13:10 "Dabaszinības" "7."
 13:10 - 13:40 "Došanās mājup" "Sabiedriskais tr."
+Sestdiena
+11:00 - 13:00 "Keramika" "Skolēnu PILS"

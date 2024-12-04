@@ -44,8 +44,12 @@ function parseSchedule(rawData) {
 
   lines.forEach((line) => {
     line = line.trim();
-
-    if (/^Pirmdiena|Otrdiena|Trešdiena|Ceturtdiena|Piektdiena$/i.test(line)) {
+    // Check if the line is a day name
+    if (
+      /^Pirmdiena|Otrdiena|Trešdiena|Ceturtdiena|Piektdiena|Sestdiena$/i.test(
+        line
+      )
+    ) {
       if (currentDay) {
         schedule.push({
           day: currentDay,
@@ -53,31 +57,35 @@ function parseSchedule(rawData) {
         });
       }
 
+      // Start a new day
       currentDay = line;
       currentDayLessons = [];
     } else if (line) {
+      // Match the lesson details
       const match = line.match(
-        /^(\d{2}:\d{2} - \d{2}:\d{2})\s+"([^"]+)"\s+"([^"]+)"$/
+        /^(\d{2}:\d{2} - \d{2}:\d{2})\s+"([^"]+)"\s+"([^"]+)"\s*(?:#(.+))?$/
       );
       if (match) {
-        const [, time, activity, location] = match;
+        const [, time, activity, location, note] = match;
         currentDayLessons.push({
           time,
           activity,
           location,
-          note: "",
+          note: note || "", // Default to an empty string if no note is provided
         });
+      } else {
+        console.log(`No match for line: "${line}"`); // Debugging
       }
     }
   });
 
+  // Push the last day's lessons to the schedule
   if (currentDay) {
     schedule.push({
       day: currentDay,
       lessons: currentDayLessons,
     });
   }
-
   return schedule;
 }
 
