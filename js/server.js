@@ -9,16 +9,24 @@ const app = express();
 app.use(
   cors({
     origin: "*",
+    methods: ["GET", "POST"],
   })
-);
+); // šo izmanto tikai palaižot serveri datorā
+
+/* app.use(
+  cors({
+    origin: "https://scheduletracker-v1xz.onrender.com", // Atļauj tikai šo URL
+    methods: ["GET", "POST"],
+  })
+); */
 
 // Apkalpo statiskos failus no galvenās mapes
 const __dirname = new URL(".", import.meta.url).pathname;
-app.use(express.static(path.join(__dirname, '../')));
+app.use(express.static(path.join(__dirname, "../")));
 
 // Kalpo HTML failu
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../index.html'));  // Pārliecinies, ka ceļš uz index.html ir pareizs
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../index.html")); // Pārliecinies, ka ceļš uz index.html ir pareizs
 });
 
 function parseSchedule(rawData) {

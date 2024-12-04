@@ -7,9 +7,9 @@ async function fetchSchedule() {
 
   // Izvēlas pareizo API endpointu atbilstoši lapai
   if (currentPage.includes("paula")) {
-    apiEndpoint = "http://localhost:3000/api/paula"; // Paula API
+    apiEndpoint = "https://localhost:3000/api/paula"; // Paula API
   } else if (currentPage.includes("toms")) {
-    apiEndpoint = "http://localhost:3000/api/toms"; // Toms API
+    apiEndpoint = "https://localhost:3000/api/toms"; // Toms API
   } else {
     console.error("Unknown page");
     return; // Atgriežas, ja lapas nav ne Paula, ne Toms
