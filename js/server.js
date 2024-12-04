@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
 import fs from "fs";
+import path from "path";
+
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(
@@ -8,6 +11,15 @@ app.use(
     origin: "*",
   })
 );
+
+// Apkalpo statiskos failus no galvenās mapes
+const __dirname = new URL(".", import.meta.url).pathname;
+app.use(express.static(path.join(__dirname, '../')));
+
+// Kalpo HTML failu
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../index.html'));  // Pārliecinies, ka ceļš uz index.html ir pareizs
+});
 
 function parseSchedule(rawData) {
   const lines = rawData.split("\n");
@@ -85,6 +97,6 @@ app.get("/api/toms", (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on http://localhost:3000");
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
