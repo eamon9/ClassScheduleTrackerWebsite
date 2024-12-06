@@ -48,7 +48,7 @@ Trešdiena
 16:10 - 17:10 "Teātra pulciņš" "306."
 17:10 - 17:40 "Došanās mājup" "Sabiedriskais tr."
 Ceturtdiena
-08:00 - 8:40 "Radošais orķestris" "212."
+08:00 - 08:40 "Radošais orķestris" "212."
 08:40 - 08:50 "Starpbrīdis" "Gaitenis"
 08:50 - 09:30 "Radošais orķestris" "212."
 09:30 - 09:40 "Starpbrīdis" "Gaitenis"
@@ -65,7 +65,7 @@ Ceturtdiena
 16:30 - 18:30 "Jaunsardze" "Āra pagalmā"
 18:30 - 19:00 "Došanās mājup" "Sabiedriskais tr."
 Piektdiena
-08:00 - 8:40 "Koris" "309."
+08:00 - 08:40 "Koris" "309."
 08:40 - 08:50 "Starpbrīdis" "Gaitenis"
 08:50 - 09:30 "Koris" "309."
 09:30 - 09:40 "Starpbrīdis" "Gaitenis"
