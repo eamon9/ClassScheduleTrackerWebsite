@@ -1,13 +1,8 @@
-// comment out const API = `http://localhost:3000` when commit and push changes to git
-// const API = `http://localhost:3000`;
-// const API = `https://scheduletracker-v1xz.onrender.com`;
-
 const API =
   window.location.hostname === "localhost"
     ? `http://localhost:3000`
     : `https://scheduletracker-v1xz.onrender.com`;
 
-// days starts with 0- Svētdiena for better organization
 const days = [
   "Svētdiena",
   "Pirmdiena",
