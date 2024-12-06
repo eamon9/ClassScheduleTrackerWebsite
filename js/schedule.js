@@ -1,6 +1,11 @@
 // comment out const API = `http://localhost:3000` when commit and push changes to git
-//const API = `http://localhost:3000`;
-const API = `https://scheduletracker-v1xz.onrender.com`;
+// const API = `http://localhost:3000`;
+// const API = `https://scheduletracker-v1xz.onrender.com`;
+
+const API =
+  window.location.hostname === "localhost"
+    ? `http://localhost:3000`
+    : `https://scheduletracker-v1xz.onrender.com`;
 
 // days starts with 0- Svētdiena for better organization
 const days = [
@@ -28,25 +33,12 @@ const months = [
   "Decembris",
 ];
 
-//******************* */
-// Override "today" and "currentTime" for testing
-/* const mockDate = new Date("2024-12-05T11:00:00"); // Set to desired date and time
-const mockDay = mockDate.getDay(); // Gets the day of the week (e.g., 2 for Otrdiena)
-const mockTime = mockDate.getHours() * 60 + mockDate.getMinutes(); // Converts to total minutes
-const today = days[mockDay];
-const now = mockDate;
-const currentTime = mockTime;
- */
+let today;
+let now;
+let currentTime;
 
-const today = days[new Date().getDay()];
-const now = new Date();
-const currentTime = now.getHours() * 60 + now.getMinutes();
-
-//******************* */
-
-async function fetchSchedule() {
+function get_API_Endpoint() {
   const currentPage = window.location.pathname;
-
   let apiEndpoint;
 
   if (currentPage.includes("paula")) {
@@ -58,6 +50,12 @@ async function fetchSchedule() {
     return;
   }
 
+  return apiEndpoint;
+}
+
+const apiEndpoint = get_API_Endpoint();
+
+async function fetchSchedule() {
   try {
     const response = await fetch(apiEndpoint);
     if (!response.ok) {
@@ -102,30 +100,39 @@ function displaySchedule(schedule) {
   });
 }
 
-function showSchedule(apiEndpoint) {
-  fetchSchedule(apiEndpoint)
-    .then((schedule) => {
-      displaySchedule(schedule);
-    })
-    .catch((error) => {
-      console.error("Error fetching or displaying schedule:", error);
-    });
+function getCurrentTimeInMinutes() {
+  const now = new Date();
+  return now.getHours() * 60 + now.getMinutes();
 }
 
 function updateTime() {
+  //******************* */
+  // Override "today" and "currentTime" for testing
+  /* const mockDate = new Date("2024-12-05T11:00:00"); // Set to desired date and time
+  const mockDay = mockDate.getDay(); // Gets the day of the week (e.g., 2 for Otrdiena)
+  const mockTime = mockDate.getHours() * 60 + mockDate.getMinutes(); // Converts to total minutes
+  today = days[mockDay];
+  now = mockDate;
+  currentTime = mockTime; */
+
+  now = new Date();
+  today = days[now.getDay()];
+  currentTime = now.getHours() * 60 + now.getMinutes();
+  //******************* */
+
   const dayName = days[now.getDay()];
   const dayDate = now.getDate();
-  const month = `${months[now.getMonth()]}<br>`;
-  const day = `${dayName}<br>`;
-  const date = `${dayDate}<br>`;
+  const month = `${months[now.getMonth()]}`;
 
   const hours = now.getHours().toString().padStart(2, "0");
   const minutes = now.getMinutes().toString().padStart(2, "0");
+  const seconds = now.getSeconds().toString().padStart(2, "0");
+
   const time = `${hours}:${minutes}`;
 
   document.getElementById("current-time").innerHTML = time;
-  document.getElementById("current-date").innerHTML = date;
-  document.getElementById("current-day").innerHTML = day;
+  document.getElementById("current-date").innerHTML = dayDate;
+  document.getElementById("current-day").innerHTML = dayName;
   document.getElementById("current-month").innerHTML = month;
 }
 
@@ -149,7 +156,7 @@ function getCurrentLesson(schedule) {
 }
 
 function highlightCurrentLesson(schedule) {
-  const container = document.getElementById("schedule-container");
+  const scheduleContainer = document.getElementById("schedule-container");
   const currentLesson = getCurrentLesson(schedule);
 
   const currentLessonText = currentLesson
@@ -157,20 +164,19 @@ function highlightCurrentLesson(schedule) {
       (currentLesson.note ? ` [${currentLesson.note}]` : "")
     : "Šobrīd stundas nenotiek.";
 
-  // Update the current lesson text
   const currentLessonDiv = document.querySelector(".current-lesson");
   if (currentLessonDiv) {
     currentLessonDiv.textContent = currentLessonText;
   }
 
-  container.querySelectorAll(".highlight").forEach((el) => {
+  scheduleContainer.querySelectorAll(".highlight").forEach((el) => {
     el.classList.remove("highlight");
   });
 
   if (currentLesson) {
-    const daySection = Array.from(container.querySelectorAll(".day")).find(
-      (el) => el.querySelector("h3").textContent.includes(today)
-    );
+    const daySection = Array.from(
+      scheduleContainer.querySelectorAll(".day")
+    ).find((el) => el.querySelector("h3").textContent.includes(today));
 
     if (daySection) {
       const lessonElement = Array.from(daySection.querySelectorAll("p")).find(
@@ -186,43 +192,39 @@ function highlightCurrentLesson(schedule) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  let schedule = null; // Declare schedule in a broader scope
+// Function to scroll to the current day's section
+function scrollToCurrentDay() {
+  const currentDay = document.getElementById("current-day").textContent.trim();
+  const daySection = document.querySelector(`.day[data-day="${currentDay}"]`);
 
-  // Fetch and display the schedule
+  if (daySection) {
+    daySection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  } else {
+    console.log(`No schedule found for ${currentDay}`);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  let schedule = null;
+
+  // Initialize the clock
+  setInterval(updateTime, 1000);
+  updateTime();
+
   fetchSchedule()
     .then((data) => {
-      schedule = data; // Store the fetched schedule in the global variable
+      schedule = data;
       displaySchedule(schedule);
 
-      // Highlight the current lesson at intervals
       setInterval(() => highlightCurrentLesson(schedule), 1000);
       highlightCurrentLesson(schedule);
     })
     .catch((error) => {
       console.error("Error fetching or displaying schedule:", error);
     });
-
-  // Initialize the clock
-  setInterval(updateTime, 1000);
-  updateTime();
-
-  // Function to scroll to the current day's section
-  function scrollToCurrentDay() {
-    const currentDay = document
-      .getElementById("current-day")
-      .textContent.trim();
-    const daySection = document.querySelector(`.day[data-day="${currentDay}"]`);
-
-    if (daySection) {
-      daySection.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    } else {
-      console.log(`No schedule found for ${currentDay}`);
-    }
-  }
 
   // Handle current time container click
   const currentTimeContainer = document.querySelector(
@@ -239,7 +241,9 @@ document.addEventListener("DOMContentLoaded", () => {
     currentLessonDiv.addEventListener("click", () => {
       const lessonText = currentLessonDiv.textContent.trim();
       if (lessonText === "Šobrīd stundas nenotiek.") {
-        console.log("No lessons currently, skipping scroll.");
+        console.log(
+          "Šobrīd stundas nenotiek., skipojam tīšanu uz neeksistējošu vietu."
+        );
         return;
       }
 
@@ -286,3 +290,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+console.log(1, `API constant: ${API}`);
+console.log(2, `Current page path: ${window.location.pathname}`);
+console.log(3, `Generated API endpoint: ${apiEndpoint}`);
+
+console.log(
+  4,
+  "Schedule container exists:",
+  !!document.getElementById("schedule-container")
+);
+console.log(
+  5,
+  "Current time element exists:",
+  !!document.getElementById("current-time")
+);
