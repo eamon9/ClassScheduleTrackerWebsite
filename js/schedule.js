@@ -35,7 +35,7 @@ let currentTime;
 
 // API Endpoint retrieval
 function getAPIEndpoint() {
-  const currentPage = window.location.pathname;
+  const currentPage = $(location).attr("pathname");
   if (currentPage.includes("paula")) {
     return `${API}/api/paula`;
   } else if (currentPage.includes("toms")) {
@@ -64,11 +64,13 @@ async function fetchSchedule() {
 
 // Format lesson details
 function createLessonElement(lesson) {
-  const lessonElement = document.createElement("p");
-  lessonElement.textContent = `${lesson.time} - ${lesson.activity} (${lesson.location})`;
+  const $lessonElement = $("<p></p>");
+  $lessonElement.text(
+    `${lesson.time} - ${lesson.activity} (${lesson.location})`
+  );
 
   if (lesson.note) {
-    lessonElement.textContent += ` [${lesson.note}]`;
+    $lessonElement.append(` [${lesson.note}]`);
   }
 
   const breakActivities = ["starpbrīdis", "došanās", "brīvais"];
@@ -77,61 +79,56 @@ function createLessonElement(lesson) {
   );
 
   if (isBreak) {
-    lessonElement.classList.add("break");
-    lessonElement.classList.add("hidden");
+    $lessonElement.addClass("break hidden");
   } else if (lesson.activity.toLowerCase().includes("pusdienas")) {
-    lessonElement.classList.add("lunch-break");
+    $lessonElement.addClass("lunch-break");
   }
 
-  return lessonElement;
+  return $lessonElement;
 }
 
 // Display schedule for specific day
 function displayDaySchedule(daySchedule) {
-  const container = document.getElementById("schedule-container");
-  const dayElement = document.createElement("div");
-  dayElement.classList.add("day");
-  dayElement.setAttribute("data-day", daySchedule.day);
+  const $container = $("#schedule-container");
+  const $dayElement = $("<div></div>")
+    .addClass("day")
+    .attr("data-day", daySchedule.day);
 
-  const dayTitle = document.createElement("h3");
-  dayTitle.textContent = daySchedule.day;
-  dayElement.appendChild(dayTitle);
+  const $dayTitle = $("<h3></h3>").text(daySchedule.day);
+  $dayElement.append($dayTitle);
 
   daySchedule.lessons.forEach((lesson) => {
-    const lessonElement = createLessonElement(lesson);
-    dayElement.appendChild(lessonElement);
+    const $lessonElement = createLessonElement(lesson);
+    $dayElement.append($lessonElement);
   });
 
-  container.appendChild(dayElement);
+  $container.append($dayElement);
 }
 
 // Display the full schedule
 function displayWeeksSchedule(scheduleData) {
-  const container = document.getElementById("schedule-container");
-  container.innerHTML = "";
+  const $container = $("#schedule-container");
+  $container.empty();
 
   scheduleData.forEach((day) => displayDaySchedule(day));
 }
 
 // Display today's schedule
 function displayTodaysSchedule(scheduleData) {
-  const todaySchedule = scheduleData.find((day) => day.day === today);
-  const container = document.getElementById("schedule-container");
-  container.innerHTML = "";
+  const $todaySchedule = scheduleData.find((day) => day.day === today);
+  const $container = $("#schedule-container");
+  $container.empty();
 
-  if (todaySchedule) {
-    displayDaySchedule(todaySchedule);
+  if ($todaySchedule) {
+    displayDaySchedule($todaySchedule);
   } else {
-    const noScheduleMessage = document.createElement("p");
-    noScheduleMessage.textContent = "Šodien nav stundu.";
-    container.appendChild(noScheduleMessage);
+    $("<p>Šodien nav stundu.</p>").appendTo($container);
   }
 }
 
 // Toggle visibility of breaks
 function toggleBreaks() {
-  const breaks = document.querySelectorAll(".break");
-  breaks.forEach((breakElement) => breakElement.classList.toggle("hidden"));
+  $(".break").toggleClass("hidden");
 }
 
 // Update the current time and date
@@ -156,13 +153,12 @@ function updateTime() {
 
   const hours = now.getHours().toString().padStart(2, "0");
   const minutes = now.getMinutes().toString().padStart(2, "0");
-  const seconds = now.getSeconds().toString().padStart(2, "0");
 
   const time = `${hours}:${minutes}`;
-  document.getElementById("current-time").innerHTML = time;
-  document.getElementById("current-date").innerHTML = dayDate;
-  document.getElementById("current-day").innerHTML = dayName;
-  document.getElementById("current-month").innerHTML = month;
+  $("#current-time").html(time);
+  $("#current-date").html(dayDate);
+  $("#current-day").html(dayName);
+  $("#current-month").html(month);
 }
 
 // Get the current lesson based on the current time
@@ -183,52 +179,42 @@ function getCurrentLesson(scheduleData) {
 // Highlight the current lesson in the schedule
 function highlightCurrentLesson(scheduleData) {
   const currentLesson = getCurrentLesson(scheduleData);
-  const scheduleContainer = document.getElementById("schedule-container");
+  const $scheduleContainer = $("#schedule-container");
 
   const currentLessonText = currentLesson
     ? `${currentLesson.time} - ${currentLesson.activity} (${currentLesson.location})` +
       (currentLesson.note ? ` [${currentLesson.note}]` : "")
     : "Šobrīd stundas nenotiek.";
 
-  const currentLessonDiv = document.querySelector(".current-lesson");
+  $(".current-lesson").text(currentLessonText);
 
-  if (currentLessonDiv) {
-    currentLessonDiv.textContent = currentLessonText;
-  }
-
-  scheduleContainer.querySelectorAll(".highlight").forEach((el) => {
-    el.classList.remove("highlight");
-  });
+  $scheduleContainer.find(".highlight").removeClass("highlight");
 
   if (currentLesson) {
     const lessonText = `${currentLesson.time} - ${currentLesson.activity} (${currentLesson.location})`;
-    const daySection = Array.from(
-      scheduleContainer.querySelectorAll(".day")
-    ).find((el) => el.querySelector("h3").textContent.includes(today));
+    const $daySection = $scheduleContainer
+      .find(".day")
+      .filter((_, el) => $(el).find("h3").text().includes(today));
 
-    if (daySection) {
-      const lessonElement = Array.from(daySection.querySelectorAll("p")).find(
-        (el) => el.textContent.includes(lessonText)
-      );
-      if (lessonElement) {
-        lessonElement.classList.add("highlight");
-      }
+    if ($daySection.length) {
+      const $lessonElement = $daySection
+        .find("p")
+        .filter((_, el) => $(el).text().includes(lessonText));
+      $lessonElement.addClass("highlight");
     }
   }
 }
 
 // Scroll to the current day's section
 function scrollToCurrentDay() {
-  const currentDay = document.getElementById("current-day").textContent.trim();
-  const daySection = document.querySelector(`.day[data-day="${currentDay}"]`);
-  if (daySection) {
-    daySection.scrollIntoView({behavior: "smooth", block: "start"});
+  const currentDay = $("#current-day").text().trim();
+  const $daySection = $(`.day[data-day="${currentDay}"]`);
+  if ($daySection.length) {
+    $daySection[0].scrollIntoView({behavior: "smooth", block: "start"});
   }
 }
 
-const canvas = document.createElement("canvas");
-canvas.width = 32;
-canvas.height = 32;
+const canvas = $("<canvas></canvas>").attr({width: 32, height: 32})[0];
 const ctx = canvas.getContext("2d");
 
 let frame = 0;
@@ -241,8 +227,10 @@ function drawFavicon() {
   ctx.fillStyle = `hsl(${(frame * 20) % 360}, 100%, 50%)`;
   ctx.fill();
 
-  const favicon = document.getElementById("favicon");
-  favicon.href = canvas.toDataURL("assets/images/animatedSchedule.gif");
+  $("#favicon").attr(
+    "href",
+    canvas.toDataURL("assets/images/animatedSchedule.gif")
+  );
 
   frame++;
 }
@@ -262,87 +250,56 @@ function init() {
     })
     .catch((error) => console.error("Error fetching schedule:", error));
 
-  const toggleBreaksBtn = document.getElementById("toggle-breaks");
-  if (toggleBreaksBtn) {
-    toggleBreaksBtn.addEventListener("click", toggleBreaks);
-  }
+  $("#toggle-breaks").on("click", toggleBreaks);
+  $("#todaysBtn").on("click", () => displayTodaysSchedule(schedule));
+  $("#thisWeekBtn").on("click", () => displayWeeksSchedule(schedule));
 
-  const todaysBtn = document.getElementById("todaysBtn");
-  if (todaysBtn) {
-    todaysBtn.addEventListener("click", () => displayTodaysSchedule(schedule));
-  }
-
-  const thisWeekBtn = document.getElementById("thisWeekBtn");
-  if (thisWeekBtn) {
-    thisWeekBtn.addEventListener("click", () => displayWeeksSchedule(schedule));
-  }
-
-  const navLink = document.querySelectorAll(".sub-cat");
-  navLink.forEach((nav) => {
-    nav.addEventListener("click", () => {
-      navLink.forEach((btn) => btn.classList.remove("active"));
-
-      nav.classList.add("active");
-    });
+  $(".sub-cat").on("click", function () {
+    $(".sub-cat").removeClass("active");
+    $(this).addClass("active");
   });
 
-  const currentTimeContainer = document.querySelector(
-    ".current-time-container"
-  );
-  if (currentTimeContainer) {
-    currentTimeContainer.addEventListener("click", scrollToCurrentDay);
-  }
+  $(".current-time-container").on("click", scrollToCurrentDay);
 
-  const currentLessonDiv = document.querySelector(".current-lesson");
-  if (currentLessonDiv) {
-    currentLessonDiv.addEventListener("click", () => {
-      const lessonText = currentLessonDiv.textContent.trim();
-      if (lessonText === "Šobrīd stundas nenotiek.") {
-        console.log(
-          "Šobrīd stundas nenotiek., skipojam tīšanu uz neeksistējošu vietu."
-        );
-        return;
-      }
-
-      const currentDay = document
-        .getElementById("current-day")
-        .textContent.trim();
-
-      const container = document.getElementById("schedule-container");
-      const daySection = Array.from(container.querySelectorAll(".day")).find(
-        (el) => el.querySelector("h3").textContent.includes(currentDay)
+  $(".current-lesson").on("click", function () {
+    const lessonText = $(this).text().trim();
+    if (lessonText === "Šobrīd stundas nenotiek.") {
+      console.log(
+        "Šobrīd stundas nenotiek., skipojam tīšanu uz neeksistējošu vietu."
       );
-
-      if (daySection) {
-        daySection.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      } else {
-        console.log(`No schedule found for ${currentDay}`);
-      }
-    });
-  }
-
-  const scrollToTopBtn = document.getElementById("scrollToTopBtn");
-
-  window.onscroll = () => {
-    if (
-      document.body.scrollTop > 100 ||
-      document.documentElement.scrollTop > 100
-    ) {
-      scrollToTopBtn.style.display = "block";
-    } else {
-      scrollToTopBtn.style.display = "none";
+      return;
     }
-  };
 
-  scrollToTopBtn.addEventListener("click", () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    const currentDay = $("#current-day").text().trim();
+    const $daySection = $("#schedule-container .day").filter((_, el) =>
+      $(el).find("h3").text().includes(currentDay)
+    );
+
+    if ($daySection.length) {
+      $daySection[0].scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    } else {
+      console.log(`No schedule found for ${currentDay}`);
+    }
+  });
+
+  const $scrollToTopBtn = $("#scrollToTopBtn");
+
+  $(window).on("scroll", () => {
+    if ($(window).scrollTop() > 100) {
+      $scrollToTopBtn.show();
+    } else {
+      $scrollToTopBtn.hide();
+    }
+  });
+
+  $scrollToTopBtn.on("click", () => {
+    $("html, body").animate({scrollTop: 0}, "smooth");
   });
 }
 
-document.addEventListener("DOMContentLoaded", init);
+$(function () {
+  init();
+});
