@@ -78,6 +78,7 @@ function createLessonElement(lesson) {
 
   if (isBreak) {
     lessonElement.classList.add("break");
+    lessonElement.classList.add("hidden");
   } else if (lesson.activity.toLowerCase().includes("pusdienas")) {
     lessonElement.classList.add("lunch-break");
   }
@@ -105,7 +106,7 @@ function displayDaySchedule(daySchedule) {
 }
 
 // Display the full schedule
-function displaySchedule(scheduleData) {
+function displayWeeksSchedule(scheduleData) {
   const container = document.getElementById("schedule-container");
   container.innerHTML = "";
 
@@ -233,8 +234,7 @@ function init() {
   fetchSchedule()
     .then((data) => {
       schedule = data;
-      displaySchedule(schedule);
-
+      displayTodaysSchedule(schedule);
       setInterval(() => highlightCurrentLesson(schedule), 1000);
       highlightCurrentLesson(schedule);
     })
@@ -252,7 +252,7 @@ function init() {
 
   const thisWeekBtn = document.getElementById("thisWeekBtn");
   if (thisWeekBtn) {
-    thisWeekBtn.addEventListener("click", () => displaySchedule(schedule));
+    thisWeekBtn.addEventListener("click", () => displayWeeksSchedule(schedule));
   }
 
   const navLink = document.querySelectorAll(".sub-cat");
