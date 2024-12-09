@@ -1,7 +1,7 @@
 Pirmdiena
 08:00 - 08:40 "Koris" "309."
 08:40 - 08:50 "Starpbrīdis" "Gaitenis"
-08:50 - 09:30 "Koris" "309."
+08:50 - 09:30 "Koris" "309." #test
 09:30 - 09:40 "Starpbrīdis" "Gaitenis"
 09:40 - 10:20 "Vizuālā māksla" "206."
 10:20 - 10:40 "Starpbrīdis" "Gaitenis"
