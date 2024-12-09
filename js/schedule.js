@@ -226,6 +226,27 @@ function scrollToCurrentDay() {
   }
 }
 
+const canvas = document.createElement("canvas");
+canvas.width = 32;
+canvas.height = 32;
+const ctx = canvas.getContext("2d");
+
+let frame = 0;
+
+function drawFavicon() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.beginPath();
+  ctx.arc(16, 16, 10, 0, 2 * Math.PI);
+  ctx.fillStyle = `hsl(${(frame * 20) % 360}, 100%, 50%)`;
+  ctx.fill();
+
+  const favicon = document.getElementById("favicon");
+  favicon.href = canvas.toDataURL("assets/images/animatedSchedule.gif");
+
+  frame++;
+}
+
 // Initialize the app
 function init() {
   setInterval(updateTime, 1000);
@@ -236,6 +257,7 @@ function init() {
       schedule = data;
       displayTodaysSchedule(schedule);
       setInterval(() => highlightCurrentLesson(schedule), 1000);
+      setInterval(drawFavicon, 5000);
       highlightCurrentLesson(schedule);
     })
     .catch((error) => console.error("Error fetching schedule:", error));
